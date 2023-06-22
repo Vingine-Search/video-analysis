@@ -1,5 +1,5 @@
-# this is an implementation of the AnchorGenerator module
-# that is used in the RegionProposalNetwork module
+# this is an implementation of the Anchor Generator module
+# that is used in the Region Proposal Network module
 
 import torch as th
 import torch.nn as nn
@@ -7,7 +7,7 @@ import torch.nn as nn
 from torch import Tensor
 from typing import Tuple, List
 
-from _utils import ImageList
+from imagelist import ImageList
 
 
 class AnchorGeni(nn.Module):
@@ -92,6 +92,16 @@ class AnchorGeni(nn.Module):
         return [len(s) * len(a) for s, a in zip(self.sizes, self.aspect_ratios)]
 
     def grid_anchors(self, grid_sizes: List[List[int]], strides: List[List[Tensor]]) -> List[Tensor]:
+        """
+        Rebasing anchors on the cell anchors and shifts on a regular grid.
+
+        Args:
+            grid_sizes (List[List[int]]): the sizes of the grids / feature maps.
+            strides (List[List[Tensor]]): the strides between each anchor box per grid.
+
+        Returns:
+            anchors after being rebased on the cell anchors and shifts on a regular grid.
+        """
         anchors = []
         cell_anchors = self.cell_anchors
         th._assert(cell_anchors is not None, "cell_anchors should not be None")
@@ -136,6 +146,5 @@ class AnchorGeni(nn.Module):
         # data type and device as the feature maps
         self.change_cell_anchors(dtype, device)
         # compute anchors over all feature maps (all anchors offsited correctly with the strides list)
-        anchors_over_all_feature_maps = self.grid_anchors(grid_sizes, strides)
-        return anchors_over_all_feature_maps
+        return self.grid_anchors(grid_sizes, strides)
 
