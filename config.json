@@ -1,0 +1,27 @@
+{
+  "model": {
+    "batch_size_perimage_so": 64,
+    "positive_fraction_so": 0.5,
+    "batch_size_perimage_rel": 128,
+    "positive_fraction_rel": 0.5,
+    "norm_scale": 10.0,
+  },
+  "rpn": {
+    "train": {
+      "pre_nms_topn": 2000,
+      "post_nms_topn": 2000,
+    },
+    "test": {
+      "pre_nms_topn": 1000,
+      "post_nms_topn": 1000,
+    },
+    "nms_thresh": 0.7,
+    "fg_thresh": 0.7,
+    "bg_thresh": 0.3,
+    "batch_size_perimage": 256,
+    "positive_fraction": 0.5
+  },
+  "dataset_dir": "./data/VRD",
+  "wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin",
+}
+
