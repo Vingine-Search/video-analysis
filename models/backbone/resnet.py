@@ -87,6 +87,10 @@ class ResNetArch(nn.Module):
         out = self.fc(out)
         return out
 
-def ResNet50() -> ResNetArch:
+def resnet50() -> ResNetArch:
     return ResNetArch([3,4,6,3])
+
+
+def resnet101() -> ResNetArch:
+    return ResNetArch([3,4,23,3])
 
