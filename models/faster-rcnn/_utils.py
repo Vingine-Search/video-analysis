@@ -1,9 +1,15 @@
 # helper functions for the faster-rcnn model
 
+import numpy as np
 import torch as th
 
 from torch import Tensor
 from typing import Tuple, List
+
+from config import reader
+
+cfg = reader()
+cfg_device = cfg["device"]
 
 def permute_and_flatten(layer: Tensor, N: int, A: int, C: int, H: int, W: int) -> Tensor:
     """
@@ -57,3 +63,23 @@ def concat_box_prediction_layers(box_cls: List[Tensor], box_regression: List[Ten
     thbox_regression = th.cat(box_regression_flattened, dim=1).reshape(-1, 4)
     return thbox_cls, thbox_regression
 
+
+def boxes_union(boxes1: Tensor, boxes2: Tensor) -> Tensor:
+    """
+    This function is used to compute the union of two sets of boxes.
+
+    Args:
+        boxes1 (tensor): Tensor of shape (N, 4) where N is the number of boxes.
+        boxes2 (tensor): Tensor of shape (N, 4) where N is the number of boxes.
+
+    Returns:
+        (tensor): Tensor of shape (N, 4) where N is the number of boxes.
+    """
+    assert boxes1.shape == boxes2.shape
+    boxes1 = boxes1.cpu().numpy()
+    boxes2 = boxes2.cpu().numpy()
+    xmin = np.minimum(boxes1[:, 0], boxes2[:, 0])
+    ymin = np.minimum(boxes1[:, 1], boxes2[:, 1])
+    xmax = np.maximum(boxes1[:, 2], boxes2[:, 2])
+    ymax = np.maximum(boxes1[:, 3], boxes2[:, 3])
+    return th.from_numpy(np.vstack((xmin, ymin, xmax, ymax)).transpose()).to(cfg_device)
