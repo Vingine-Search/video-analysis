@@ -4,7 +4,7 @@ import numpy as np
 import torch as th
 
 from torch import Tensor
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 from config import reader
 
@@ -83,3 +83,60 @@ def boxes_union(boxes1: Tensor, boxes2: Tensor) -> Tensor:
     xmax = np.maximum(boxes1[:, 2], boxes2[:, 2])
     ymax = np.maximum(boxes1[:, 3], boxes2[:, 3])
     return th.from_numpy(np.vstack((xmin, ymin, xmax, ymax)).transpose()).to(cfg_device)
+
+def resize_boxes(
+    boxes:Tensor,
+    to_size:Tuple[int, int],
+    from_size:Tuple[int, int]
+) -> Tensor:
+    """
+    This function is used to resize the boxes to the original image size.
+
+    Args:
+        boxes (tensor): Tensor of shape (N, 4) where N is the number of boxes.
+        to_size (tuple[int, int]): Tuple of ints representing the size of the original image.
+        from_size (tuple[int, int]): Tuple of ints representing the size of the resized image.
+
+    Returns:
+        (tensor): Tensor of shape (N, 4) where N is the number of boxes.
+    """
+    ratios = [
+        th.tensor(s, dtype=th.float32, device=boxes.device) /
+        th.tensor(s_orig, dtype=th.float32, device=boxes.device)
+        for s, s_orig in zip(from_size, to_size)
+    ]
+    ratio_height, ratio_width = ratios
+    xmin, ymin, xmax, ymax = boxes.unbind(1)
+    xmin = xmin * ratio_width
+    xmax = xmax * ratio_width
+    ymin = ymin * ratio_height
+    ymax = ymax * ratio_height
+    return th.stack((xmin, ymin, xmax, ymax), dim=1)
+
+
+def postprocess(
+    result: List[Dict[str, Tensor]],    
+    image_shapes: List[Tuple[int, int]],
+    original_image_sizes: List[Tuple[int, int]] 
+) -> List[Dict[str, Tensor]]:
+    """
+    This function is used to postprocess the output of the model.
+    i.e to resize the boxes of each cat (subjec, object) to the original image size. 
+
+    Args:
+        result (list): List of dictionaries containing the output of the model.
+        image_shapes (list): List of tuples representing the size of the resized image.
+        original_image_sizes (list): List of tuples representing the size of the original image.
+
+    Returns:
+        (list): List of dictionaries containing the output of the model.
+    """
+    for i, (pred, x, y) in enumerate(zip(result, image_shapes, original_image_sizes)):
+        boxes = pred["sbj_boxes"]
+        boxes = resize_boxes(boxes, x, y)
+        result[i]["sbj_boxes"] = boxes
+        boxes = pred["obj_boxes"]
+        boxes = resize_boxes(boxes, x, y)
+        result[i]["obj_boxes"] = boxes
+    return result
+
