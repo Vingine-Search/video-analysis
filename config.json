@@ -1,4 +1,5 @@
 {
+  "device": "cuda",
   "model": {
     "batch_size_perimage_so": 64,
     "positive_fraction_so": 0.5,
@@ -21,6 +22,19 @@
     "batch_size_perimage": 256,
     "positive_fraction": 0.5
   },
+  "box": {
+    "num_classes": 100,
+    "score_thresh": 0.5,
+    "nms_thresh": 0.4,
+    "detections_perimg": 100,
+    "fg_thresh": 0.5,
+    "bg_thresh": 0.5,
+    "batch_size_perimage": 512,
+    "positive_fraction": 0.25
+  },
+  "test": {
+    "threshold": 0.5
+  }
   "dataset_dir": "./data/VRD",
   "wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin",
 }
