@@ -21,7 +21,7 @@ from config import reader
 from ..reldn.reldn import RelDN
 from twomlp import TwoMLP
 from predictor import Predictor
-from _utils import boxes_union
+from _utils import union_boxes
 from loss import fastrcnn_loss, reldn_loss
 
 cfg = reader()
@@ -46,7 +46,7 @@ model_positive_fraction_rel = cfg["model"]["positive_fraction_rel"]
 model_norm_scale = cfg["model"]["norm_scale"]
 
 
-class RoIHeads(nn.Module):
+class RoIHead(nn.Module):
     __annotations__ = {
         'box_coder': BoxCoder,
         'proposal_matcher': Matcher,
@@ -54,7 +54,7 @@ class RoIHeads(nn.Module):
     }
     
     def __init__(self):
-        super(RoIHeads, self).__init__()
+        super(RoIHead, self).__init__()
         self.box_roi_pool = MultiScaleRoIAlign(
             featmap_names=['0', '1', '2', '3'], # what featuremap names to use
             output_size=7, # 7x7 output
@@ -351,7 +351,7 @@ class RoIHeads(nn.Module):
             pos_obj_labels[img_id] = pos_obj_labels[img_id][obj_inds]
             pos_sbj_proposals[img_id] = pos_sbj_proposals[img_id][sbj_inds]
             pos_obj_proposals[img_id] = pos_obj_proposals[img_id][obj_inds]
-            rlp_proposals.append(boxes_union(pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
+            rlp_proposals.append(union_boxes(pos_obj_proposals[img_id], pos_sbj_proposals[img_id]))
         # assign gt_predicate to relation proposals
         rlp_labels = self.assign_pred_to_rlp_proposals(pos_sbj_proposals, pos_obj_proposals, gt_boxes, gt_labels, gt_preds)
         # now we subsample the relations to have a fixed number of positive relations we can train on
@@ -512,7 +512,7 @@ class RoIHeads(nn.Module):
                 sbj_inds, obj_inds = self.remove_self_pairs(sbj_inds, obj_inds)
                 sbj_boxes = boxes[img_id][sbj_inds]
                 obj_boxes = boxes[img_id][obj_inds]
-                rlp_boxes = boxes_union(sbj_boxes, obj_boxes)
+                rlp_boxes = union_boxes(sbj_boxes, obj_boxes)
                 all_sbj_boxes.append(sbj_boxes)
                 all_obj_boxes.append(obj_boxes)
                 all_rlp_boxes.append(rlp_boxes)

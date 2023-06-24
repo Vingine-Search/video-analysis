@@ -64,7 +64,7 @@ def concat_box_prediction_layers(box_cls: List[Tensor], box_regression: List[Ten
     return thbox_cls, thbox_regression
 
 
-def boxes_union(boxes1: Tensor, boxes2: Tensor) -> Tensor:
+def union_boxes(boxes1: Tensor, boxes2: Tensor) -> Tensor:
     """
     This function is used to compute the union of two sets of boxes.
 
@@ -114,7 +114,7 @@ def resize_boxes(
     return th.stack((xmin, ymin, xmax, ymax), dim=1)
 
 
-def postprocess(
+def postprocess_boxes(
     result: List[Dict[str, Tensor]],    
     image_shapes: List[Tuple[int, int]],
     original_image_sizes: List[Tuple[int, int]] 
@@ -139,4 +139,42 @@ def postprocess(
         boxes = resize_boxes(boxes, x, y)
         result[i]["obj_boxes"] = boxes
     return result
+
+def flatten_targets(targets: List[Dict[str, Tensor]]) -> List[Dict[str, Tensor]]:
+    """
+    flatten each tensor in the targets list.
+
+    Args:
+        targets (list): List of dictionaries containing the targets.
+
+    Returns:
+        (list): List of dictionaries containing the targets with flattened tensors.
+    """
+    gth_list = []
+    for target in targets:
+        gt = {}
+        gt["boxes"] = target["boxes"].view(-1, 4)
+        gt["labels"] = target["labels"].view(-1)
+        gt["preds"] = target["preds"].view(-1)
+        gth_list.append(gt)
+    return gth_list
+
+def unflatten_targets(targets: List[Dict[str, Tensor]]) -> List[Dict[str, Tensor]]:
+    """
+    unflatten each tensor in the targets list.
+
+    Args:
+        targets (list): List of dictionaries containing the targets.
+
+    Returns:
+        (list): List of dictionaries containing the targets with unflattened tensors.
+    """
+    gth_list = []
+    for target in targets:
+        gt = {}
+        gt["boxes"] = target["boxes"].view(-1, 2, 4)
+        gt["labels"] = target["labels"].view(-1, 2)
+        gt["preds"] = target["preds"].view(-1)
+        gth_list.append(gt)
+    return gth_list
 
