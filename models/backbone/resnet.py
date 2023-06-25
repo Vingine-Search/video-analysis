@@ -9,14 +9,13 @@
 # well just say, more easily from one layer to the next’s next layer, i.e.,
 # you bypass data along with normal CNN flow from one layer to the next layer after the immediate next.
 
-import torch as th
 import torch.nn as nn
 import torch.nn.functional as F
 
 from torch import Tensor
 from typing import List
 
-class ResNet50Block(nn.Module):
+class ResNetBlock(nn.Module):
     """
     Residual block for resnet50 (expansion = 4)
 
@@ -26,13 +25,13 @@ class ResNet50Block(nn.Module):
         stride (int): stride of the convolutional layer (default: 1)
     """
     def __init__(self, in_channels:int, out_channels:int, stride:int=1):
-        super(ResNet50Block, self).__init__()
+        super(ResNetBlock, self).__init__()
         self.expansion = 4
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels)
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channels)
-        self.conv3 = nn.Conv2d(out_channels, out_channels*self.expansion, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv3 = nn.Conv2d(out_channels, out_channels*self.expansion, kernel_size=1, stride=1, padding=0, bias=False)
         self.bn3 = nn.BatchNorm2d(out_channels*self.expansion)
 
         self.skip = nn.Sequential()
@@ -56,8 +55,9 @@ class ResNetArch(nn.Module):
     def __init__(self, layers:List[int], img_channels:int=3, num_classes:int=10):
         super(ResNetArch, self).__init__()
         self.in_channels = 64
-        self.conv1 = nn.Conv2d(img_channels, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(img_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
+        self.max_pool = nn.MaxPool2d(kernel_size = 3, stride=2, padding=1)
         # ResNet50 has 3 layers, each layer has 3, 4, 6, 3 blocks respectively
         self.layer1 = self._make_layer(64, layers[0], stride=1)
         self.layer2 = self._make_layer(128, layers[1], stride=2)
@@ -72,12 +72,13 @@ class ResNetArch(nn.Module):
         strides = [stride] + [1]*(num_blocks-1)
         layers = []
         for stride in strides:
-            layers.append(ResNet50Block(self.in_channels, out_channels, stride))
+            layers.append(ResNetBlock(self.in_channels, out_channels, stride))
             self.in_channels = out_channels * 4
         return nn.Sequential(*layers)
 
     def forward(self, x:Tensor) -> Tensor:
         out = F.relu(self.bn1(self.conv1(x)))
+        out = self.max_pool(out)
         out = self.layer1(out)
         out = self.layer2(out)
         out = self.layer3(out)
