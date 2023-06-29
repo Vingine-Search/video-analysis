@@ -5,7 +5,7 @@ import numpy as np
 from numpy import linalg as la
 from gensim.models.keyedvectors import load_word2vec_format
 
-from config import reader
+from ...config import reader
 from typing import List, Dict, Tuple
 
 cfg = reader()

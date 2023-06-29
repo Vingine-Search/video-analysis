@@ -7,7 +7,7 @@ import torch.nn as nn
 from torchvision.models.detection.faster_rcnn import GeneralizedRCNNTransform
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 
-from config import reader
+from ...config import reader
 from ..backbone.vgg import vgg16
 from ..backbone.resnet import resnet101
 from .rpn import RPN

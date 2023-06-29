@@ -17,7 +17,7 @@ from torchvision.ops import boxes as box_ops
 from torch import Tensor
 from typing import Dict, List, Optional, Tuple
 
-from config import reader
+from ...config import reader
 from ..reldn.reldn import RelDN
 from twomlp import TwoMLP
 from predictor import Predictor
