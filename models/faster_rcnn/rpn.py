@@ -5,23 +5,23 @@ import torch.nn as nn
 from torch import Tensor
 from typing import Dict, List, Optional
 
-from imagelist import ImageList
-from rpnhead import RPNHead
-from anchorgeni import AnchorGeni
-from rpncore import RPNCore
+from .imagelist import ImageList
+from .rpnhead import RPNHead
+from .anchorgeni import AnchorGeni
+from .rpncore import RPNCore
 
-from ...config import reader
+from config import reader
 
 cfg = reader()
 
 # read rpn config
 pre_nms_topn = {
-    "training": cfg["rpn"]["training"]["pre_nms_topn"],
-    "testing": cfg["rpn"]["testing"]["pre_nms_topn"]
+    "training": cfg["rpn"]["train"]["pre_nms_topn"],
+    "testing": cfg["rpn"]["test"]["pre_nms_topn"]
 }
 post_nms_topn = {
-    "training": cfg["rpn"]["training"]["post_nms_topn"],
-    "testing": cfg["rpn"]["testing"]["post_nms_topn"]
+    "training": cfg["rpn"]["train"]["post_nms_topn"],
+    "testing": cfg["rpn"]["test"]["post_nms_topn"]
 }
 nms_thresh = cfg["rpn"]["nms_thresh"]
 fg_thresh = cfg["rpn"]["fg_thresh"]

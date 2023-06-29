@@ -74,7 +74,7 @@
 	"wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin",
   "snapshot_dir": "./outputs/snapshots",
   "log_dir": "./outputs/tf_logs",
-  "result_dir": "./outputs/results",
+  "results_dir": "./outputs/results",
   "model_url": "https://github.com/pranoyr/large-scale-visual-relationship-understanding/releases/download/v1.0/large_scale_vrd_iter-25000.pth"
 }
 

@@ -6,19 +6,19 @@ import torch as th
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 
-from ..config import reader
-from ..datasets.loader import (
+from config import reader
+from datasets.loader import (
     get_training_data,
     get_validation_data,
     collater
 )
 
-from ..models.faster_rcnn.faster_rcnn import FasterRCNN
+from models.faster_rcnn.faster_rcnn import FasterRCNN
 
-from .running_avg import RunningAvg
-from .progress_bar import ProgressBar
-from .metrics_logger import MetricsLogger
-from ._utils import (
+from running_avg import RunningAvg
+from progress_bar import ProgressBar
+from metrics_logger import MetricsLogger
+from _utils import (
     save_model,
     load_from_ckpt,
     load_train_utils,

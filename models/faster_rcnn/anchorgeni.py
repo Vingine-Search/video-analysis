@@ -7,7 +7,7 @@ import torch.nn as nn
 from torch import Tensor
 from typing import Tuple, List
 
-from imagelist import ImageList
+from .imagelist import ImageList
 
 
 class AnchorGeni(nn.Module):

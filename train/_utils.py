@@ -2,7 +2,7 @@
 
 import os
 import torch as th
-from ..config import reader
+from config import reader
 
 cfg = reader()
 snapshots_dir = cfg['snapshots_dir']

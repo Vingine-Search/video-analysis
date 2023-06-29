@@ -1,11 +1,11 @@
 # this is used to generate word vector for each word in the vocabulary
 
 import json
+import gensim
 import numpy as np
 from numpy import linalg as la
-from gensim.models.keyedvectors import load_word2vec_format
 
-from ...config import reader
+from config import reader
 from typing import List, Dict, Tuple
 
 cfg = reader()
@@ -17,7 +17,7 @@ word_vector_path = cfg["wordvectors_dir"]
 objs_path = dataset_path + '/json_dataset/objects.json'
 preds_path = dataset_path + '/json_dataset/predicates.json'
 
-word2vec_model = load_word2vec_format(word_vector_path, binary=True)
+word2vec_model = gensim.models.KeyedVectors.load_word2vec_format(word_vector_path, binary=True)
 
 def lower_all() -> List[str]:
     """

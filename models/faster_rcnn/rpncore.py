@@ -15,10 +15,10 @@ from torchvision.models.detection._utils import (
 )
 from torchvision.ops import boxes as box_ops
 
-from rpnhead import RPNHead
-from anchorgeni import AnchorGeni
-from imagelist import ImageList
-from _utils import (
+from .rpnhead import RPNHead
+from .anchorgeni import AnchorGeni
+from .imagelist import ImageList
+from ._utils import (
     permute_and_flatten,
     concat_box_prediction_layers,
 )

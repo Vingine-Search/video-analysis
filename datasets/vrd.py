@@ -1,7 +1,7 @@
 # this class helps in loading data from VRD dataset
 
 from copy import deepcopy
-from ..config import reader
+from config import reader
 from PIL import Image
 
 import torch as th

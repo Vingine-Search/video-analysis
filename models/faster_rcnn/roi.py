@@ -17,12 +17,12 @@ from torchvision.ops import boxes as box_ops
 from torch import Tensor
 from typing import Dict, List, Optional, Tuple
 
-from ...config import reader
+from config import reader
 from ..reldn.reldn import RelDN
-from twomlp import TwoMLP
-from predictor import Predictor
-from _utils import union_boxes
-from loss import fastrcnn_loss, reldn_loss
+from .twomlp import TwoMLP
+from .predictor import Predictor
+from ._utils import union_boxes
+from .loss import fastrcnn_loss, reldn_loss
 
 cfg = reader()
 cfg_device = cfg["device"]

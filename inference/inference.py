@@ -12,8 +12,8 @@ import torch as th
 from torch.hub import load_state_dict_from_url
 from torchvision import transforms
 
-from ..config import reader
-from ..models.faster_rcnn.faster_rcnn import FasterRCNN
+from config import reader
+from models.faster_rcnn.faster_rcnn import FasterRCNN
 from ._utils import (
     draw_boxes,
     set_text,

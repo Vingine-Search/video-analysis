@@ -4,10 +4,10 @@ import torch as th
 import torch.nn.functional as F
 import torch.nn as nn
 
-from .basic_conv3d import BasicConv3D
-from .sep_conv3d import SepConv3D
-from .self_gating import SelfGatting
-from .inception import InceptionBlock
+from basic_conv3d import BasicConv3D
+from sep_conv3d import SepConv3D
+from self_gating import SelfGatting
+from inception import InceptionBlock
 
 class S3DG(nn.Module):
     """

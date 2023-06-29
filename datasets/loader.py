@@ -1,5 +1,5 @@
 from vrd import VRD
-from ..config import reader
+from config import reader
 
 cfg = reader()
 cfg_device = cfg["device"]
