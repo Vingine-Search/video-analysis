@@ -2,11 +2,15 @@
 # is used to visualize the training process
 
 import tensorboardX
+from ..config import reader
+
+cfg = reader()
+log_dir = cfg["train"]["log_dir"]
 
 class MetricsLogger():
     """ Log the metrics to tensorboardX """
 
-    def __init__(self, log_dir):
+    def __init__(self):
         self.summary_writer = tensorboardX.SummaryWriter(log_dir=log_dir)
 
     def log_metrics(self, train_losses, val_losses, epoch, lr):
