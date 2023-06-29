@@ -6,6 +6,7 @@ from PIL import Image
 
 import torch as th
 from torchvision import transforms
+from torch.utils.data import Dataset
 
 from ._utils import (
     make_image_list,
@@ -20,7 +21,7 @@ cfg = reader()
 cfg_device = cfg["device"]
 
 
-class VRD():
+class VRD(Dataset):
     """ This class helps in loading data from VRD dataset """
 
     def __init__(self, dataset_path:str, data_type:str) -> None:
