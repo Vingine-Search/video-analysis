@@ -41,7 +41,38 @@
 	"test": {
 		"threshold": 0.5
 	},
+  "train": {
+    "lrs": [],
+    "steps": [],
+    "gamma": 0.1,
+    "momentum": 0.9,
+    "step_size": 30000,
+    "lr_policy": "step",
+    "learning_rate": 0.0001,
+    "backbone_lr_scalar": 0.1,
+    "weight_decay": 0.0001,
+    "double_bias": true,
+    "bias_decay": false,
+    "warm_up_iters": 500,
+    "warm_up_factor": 0.3333333333333333,
+    "warm_up_method": "linear",
+    "scale_momentum": false,
+    "scale_momentum_threshold": 1.1,
+    "log_lr_change_threshold": 1.1
+  },
+  "opt": {
+    "num_workers": 0,
+    "batch_size": 4,
+    "optimizer_type": "SGD",
+    "scheduler_type": "multi_step",
+    "weight_path": "",
+    "begin_iter": 1,
+    "max_iter": 125446
+  },
   "dataset": "VRD",
 	"dataset_dir": "./data/VRD",
-	"wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin"
+	"wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin",
+  "snapshot_dir": "./outputs/snapshots",
+  "log_dir": "./outputs/tf_logs"
 }
+
