@@ -44,6 +44,7 @@ def set_text(img, text, text_pos):
     """
     font = cv2.FONT_HERSHEY_SIMPLEX
     lineThickness = 1
+    color = (0,0,0)
     font_size = 0.5
     (text_width, text_height) = cv2.getTextSize(text, font, font_size, lineThickness)[0]
     text_offset_x,text_offset_y = text_pos

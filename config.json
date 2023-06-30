@@ -23,7 +23,7 @@
 		"positive_fraction": 0.5
 	},
 	"box": {
-		"num_classes": 100,
+		"num_classes": 101,
 		"score_thresh": 0.5,
 		"nms_thresh": 0.4,
 		"detections_perimg": 100,

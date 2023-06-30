@@ -31,7 +31,7 @@ class FasterRCNN(nn.Module):
         super(FasterRCNN, self).__init__()
         self.fpn = resnet_fpn_backbone(backbone_name='resnet101', pretrained=True, trainable_layers=5)
         self.rpn = RPN()
-        self.roi = RoIHead()
+        self.roi_heads = RoIHead()
         self.transform = GeneralizedRCNNTransform(min_size, max_size, image_mean, image_std)
 
     def forward(self, images, targets=None):
@@ -50,14 +50,14 @@ class FasterRCNN(nn.Module):
             proposals, rpn_losses, fpn_feature_maps = self.rpn(images, fpn_feature_maps, targets)
             targets = unflatten_targets(targets)
             # apply region of interest (RoI) pooling to the feature maps
-            detections, detector_losses = self.roi(fpn_feature_maps, proposals, images.image_sizes, targets)
+            detections, detector_losses = self.roi_heads(fpn_feature_maps, proposals, images.image_sizes, targets)
             losses = {}
             losses.update(detector_losses)
             losses.update(rpn_losses)
         else: # for inference
             losses = {}
             proposals, rpn_losses, fpn_feature_maps = self.rpn(images, fpn_feature_maps)
-            detections, detector_losses = self.roi(fpn_feature_maps, proposals, images.image_sizes)
+            detections, detector_losses = self.roi_heads(fpn_feature_maps, proposals, images.image_sizes)
             detections = postprocess_boxes(detections, images.image_sizes, original_image_sizes)
         return detections, losses
 

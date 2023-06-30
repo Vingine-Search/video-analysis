@@ -56,7 +56,7 @@ class RPNCore(nn.Module):
 
     __annotations__ = {
         'anchorgeni': AnchorGeni,
-        'rpnhead': RPNHead,
+        'head': RPNHead,
         'box_coder': BoxCoder, # encode and decode boxes
         'proposal_matcher': Matcher, # match proposals with GT boxes (it uses IoU as a metric)
         'sampler': BalancedPositiveNegativeSampler, # sample positive and negative anchors
@@ -81,7 +81,7 @@ class RPNCore(nn.Module):
         super().__init__()
         # Modules
         self.anchorgeni = anchorgeni
-        self.rpnhead = rpnhead
+        self.head = rpnhead
         self.box_coder = BoxCoder(weights=(1.0, 1.0, 1.0, 1.0))
         # used during training
         self.box_similarity = box_ops.box_iou # IoU as a metric for matching proposals with GT boxes
@@ -303,7 +303,7 @@ class RPNCore(nn.Module):
         """
         # RPN uses all feature maps that are available
         features = list(_features.values())
-        objectness, pred_bbox_deltas = self.rpnhead(features)
+        objectness, pred_bbox_deltas = self.head(features)
         anchors = self.anchorgeni(images, features)
         # 
         num_images = len(anchors)
