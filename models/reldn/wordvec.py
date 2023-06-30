@@ -26,11 +26,10 @@ def lower_all() -> List[str]:
     Returns:
         list: all the words in the word2vec model
     """
-    all_keys = list(word2vec_model.vocab.keys())
-    for key in all_keys:
-        new_key = key.lower()
-        word2vec_model.vocab[new_key] = word2vec_model.vocab.pop(key)
-    return list(word2vec_model.vocab.keys())
+    vocab = list(word2vec_model.key_to_index.keys())
+    for word in vocab:
+        word2vec_model.key_to_index[word.lower()] = word2vec_model.key_to_index.pop(word)
+    return vocab
 
 def load_objs_cat() -> Dict:
     """
