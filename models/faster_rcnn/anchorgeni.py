@@ -74,7 +74,6 @@ class AnchorGeni(nn.Module):
         base_anchors = th.stack([-ws, -hs, ws, hs], dim=1) / 2
         return base_anchors.round()
 
-
     def change_cell_anchors(self, dtype: th.dtype, device: th.device) -> None:
         """
         Change the data type and device of cell_anchors.
@@ -146,5 +145,11 @@ class AnchorGeni(nn.Module):
         # data type and device as the feature maps
         self.change_cell_anchors(dtype, device)
         # compute anchors over all feature maps (all anchors offsited correctly with the strides list)
-        return self.grid_anchors(grid_sizes, strides)
+        anchors_over_all_feature_maps = self.grid_anchors(grid_sizes, strides)
+        anchors: List[List[th.Tensor]] = []
+        for _ in range(len(image_list.image_sizes)):
+            anchors_in_image = [anchors_per_feature_map for anchors_per_feature_map in anchors_over_all_feature_maps]
+            anchors.append(anchors_in_image)
+        anchors_list = [th.cat(anchors_per_image) for anchors_per_image in anchors]
+        return anchors_list
 
