@@ -25,7 +25,7 @@ cfg = reader()
 dataset_dir = cfg["dataset_dir"]
 model_url = cfg["model_url"]
 results_dir = cfg["results_dir"]
-device = "cpu" #cfg["device"]
+device = cfg["device"]
 
 def draw_relation(img, sbj_box, obj_box, sbj, obj, pred):
     color = list(np.random.random(size=3) * 256)
@@ -44,14 +44,7 @@ def draw_relation(img, sbj_box, obj_box, sbj, obj, pred):
     cv2.imwrite(path, img)
 
 
-def draw_bbox(img, boxes, labels, _ind_to_class):
-    for bbox, label in zip(boxes, labels):
-        img = draw_boxes(img, bbox, label, _ind_to_class)
-    path = f"./{results_dir}/objs-{opt.image_path.split('/')[-1]}"
-    cv2.imwrite(path, img)
-
-
-def infer(image_path):
+def infer(images_paths_list):
     faster_rcnn = FasterRCNN().to(device)
     transform = transforms.Compose([transforms.ToTensor()])
 
@@ -64,6 +57,8 @@ def infer(image_path):
     classes = deepcopy(objects)
     predicates.insert(0, 'unknown')
     classes.insert(0, '__background__')
+    _class_to_ind = dict(zip(classes, range(len(classes))))
+    _ind_to_class = {v: k for k, v in _class_to_ind.items()}
 
     # load pretrained weights
     checkpoint = load_state_dict_from_url(model_url, map_location='cpu')
@@ -71,31 +66,25 @@ def infer(image_path):
     print("Model Restored")
     faster_rcnn.eval()
 
-    # load image
-    im = Image.open(image_path)
-    img = np.array(im)
-    draw = img.copy()
-    draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
-    draw_objects = draw_rlp.copy()
-    im = transform(im)
-
-    with th.no_grad():
-        detections, losses = faster_rcnn([im])
-
-    sbj_boxes = detections[0]['sbj_boxes']
-    obj_boxes = detections[0]['obj_boxes']
-    sbj_labels = detections[0]['sbj_labels']
-    obj_labels = detections[0]['obj_labels']
-    pred_labels = detections[0]['predicates']
-    for sbj_box, obj_box, sbj_label, obj_label, pred  in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
-        sbj, obj, pred = objects[sbj_label], objects[obj_label], predicates[pred]
-        print(sbj, pred, obj)
-        draw_relation(draw_rlp, sbj_box, obj_box, sbj, obj, pred)
-
-    # boxes = detections[0]['boxes']
-    # labels = detections[0]['labels']
-    # scores = detections[0]['scores']
-    # draw_bbox(draw_objects, boxes, labels, classes)
+    # load an image
+    for image_path in images_paths_list:
+        im = Image.open(image_path)
+        img = np.array(im)
+        draw = img.copy()
+        draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
+        draw_objects = draw_rlp.copy()
+        im = transform(im)
+        with th.no_grad():
+            detections, losses = faster_rcnn([im])
+        sbj_boxes = detections[0]['sbj_boxes']
+        obj_boxes = detections[0]['obj_boxes']
+        sbj_labels = detections[0]['sbj_labels']
+        obj_labels = detections[0]['obj_labels']
+        pred_labels = detections[0]['predicates']
+        for sbj_box, obj_box, sbj_label, obj_label, pred  in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
+            sbj, obj, pred = objects[sbj_label], objects[obj_label], predicates[pred]
+            print(sbj, pred, obj)
+            # draw_relation(draw_rlp, sbj_box, obj_box, sbj, obj, pred)
 
 
 if __name__ == '__main__':
@@ -110,22 +99,22 @@ if __name__ == '__main__':
     # incase of single image
     if opt.image_path:
         if check_file_exists(opt.image_path):
-            infer(opt.image_path)
+            images_paths_list = [opt.image_path]
+            infer(images_paths_list)
         else:
             print("File does not exist")
 
     # incase of directory of images
     elif opt.image_dir:
         if check_dir_exists(opt.image_dir):
+            images_paths_list = []
             for image_path in os.listdir(opt.image_dir):
-                print(f"Image: {image_path}")
-                infer(os.path.join(opt.image_dir, image_path))
+                images_paths_list.append(os.path.join(opt.image_dir, image_path))
+            infer(images_paths_list)
         else:
             print("Directory does not exist")
 
     # require an argument
     else:
         print("Please provide either --image_path or --image_dir")
-
-
 
