@@ -60,6 +60,11 @@
     "scale_momentum_threshold": 1.1,
     "log_lr_change_threshold": 1.1
   },
+  "s3d": {
+    "num_classes": 400,
+    "model_path": "./weights/S3D_kinetics400.pt",
+    "classes_names": "./data/kinetics_classes.txt"
+  },
   "opt": {
     "num_workers": 0,
     "batch_size": 4,
