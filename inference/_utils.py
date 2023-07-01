@@ -55,24 +55,17 @@ def set_text(img, text, text_pos):
 
 
 def clip_to_frames(clip_path, output_path, frames_rate=16):
-    cap = cv2.VideoCapture(clip_path)
-    if not cap.isOpened():
-        print("Error opening video stream or file")
+    """ video 1minute -> 60 frame i.e 1 frame per second """
+    vidcap = cv2.VideoCapture(clip_path)
     frame_count = 0
-    # frame_rate = cap.get(cv2.CAP_PROP_FPS)
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if ret:
-            if frame_count % (frames_rate/2) == 0:
-                try:
-                    cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), frame)
-                except Exception as e:
-                    print(f"Error saving frame {frame_count}: {e}")
-            frame_count += 1
-        else:
-            break
-        frame_count += 1
-    cap.release()
+    success, frame = vidcap.read()
+    success = True
+    while success:
+        cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), frame)
+        vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))    # added this line 
+        frame_count = frame_count + 1
+        success, frame = vidcap.read()
+    vidcap.release()
     cv2.destroyAllWindows()
     
 
