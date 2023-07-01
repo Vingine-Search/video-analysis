@@ -67,6 +67,7 @@ def infer(sample_dir, model, class_names):
     snippet = []
     for frame in list_frames:
         img = cv2.imread(os.path.join(sample_dir, frame))
+        # img = cv2.resize(img, (224, 224))
         img = img[...,::-1]
         snippet.append(img)
 

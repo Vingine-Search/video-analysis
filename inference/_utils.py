@@ -61,6 +61,7 @@ def clip_to_frames(clip_path, output_path, frames_rate=16):
     success, frame = vidcap.read()
     success = True
     while success:
+        frame = cv2.resize(frame, (224, 224))
         cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), frame)
         vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))    # added this line 
         frame_count = frame_count + 1

@@ -89,7 +89,6 @@ def infer(images_paths_list):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--image_path', type=str, help='path to one image')
     group.add_argument('--image_dir', type=str, help='path to a directory of images')
