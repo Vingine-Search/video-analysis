@@ -45,7 +45,9 @@ class InceptionBlock(nn.Module):
     ):
         super(InceptionBlock, self).__init__()
         self.gatting = gatting
-        self.branch0 = BasicConv3D(input_dim, num_outputs_b0_s0, 1, stride=1, padding=0)
+        self.branch0 = nn.Sequential(
+            BasicConv3D(input_dim, num_outputs_b0_s0, 1, stride=1, padding=0)
+        )
         self.branch1 = nn.Sequential(
             BasicConv3D(input_dim, num_outputs_b1_s0, 1, stride=1, padding=0),
             SepConv3D(num_outputs_b1_s0, num_outputs_b1_s1, 3, stride=1, padding=1),
@@ -55,7 +57,7 @@ class InceptionBlock(nn.Module):
             SepConv3D(num_outputs_b2_s0, num_outputs_s2_s1, 3, stride=1, padding=1),
         )
         self.branch3 = nn.Sequential(
-            nn.MaxPool3d((3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1)),
+            nn.MaxPool3d(kernel_size=(3, 3, 3), stride=1, padding=1),
             BasicConv3D(input_dim, num_outputs_b3_s0, 1, stride=1, padding=0),
         )
         if gatting:

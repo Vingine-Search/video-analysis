@@ -51,7 +51,7 @@ class BasicConv3D(nn.Module):
         # 1. speed up training
         # 2. decrease the sensitivity to the initial values of the weights
         # 3. regularize the model (a little bit)
-        self.bn = nn.BatchNorm3d(output_dim, eps=0.001, momentum=0.001, affine=True)
+        self.bn = nn.BatchNorm3d(output_dim, eps=1e-3, momentum=0.001, affine=True)
 
         # ReLU: Rectified Linear Unit activation function
         self.relu = nn.ReLU(inplace=True)

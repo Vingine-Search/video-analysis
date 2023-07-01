@@ -5,6 +5,13 @@ import torch as th
 import torch.nn as nn
 
 from .s3dg import S3DG
+from config import reader
+
+cfg = reader()
+num_classes = cfg["s3d"]["num_classes"]
+s3d_model_path = cfg["s3d"]["model_path"]
+s3d_classes_names = cfg["s3d"]["classes_names"]
+
 
 def init_weights(model: nn.Module, state_dict: dict, should_omit="s3dg."):
     old_keys = []
@@ -79,10 +86,7 @@ def init_weights(model: nn.Module, state_dict: dict, should_omit="s3dg."):
     return model
 
 
-def get_model(**args):
-    num_classes = args["num_classes"]
-    s3d_model_path = args["s3d_model_path"]
-
+def get_model():
     print("Loading S3DG ...")
     model = S3DG(num_classes)
     model = model.cuda()

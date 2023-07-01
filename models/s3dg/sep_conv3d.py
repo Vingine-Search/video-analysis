@@ -20,12 +20,12 @@ class SepConv3D(nn.Module):
     """
 
     __annotations__ = {
-        "spatial_conv": nn.Conv3d,
-        "temporal_conv": nn.Conv3d,
-        "bn_spatial": nn.BatchNorm3d,
-        "bn_temporal": nn.BatchNorm3d,
-        "relu_spatial": nn.ReLU,
-        "relu_temporal": nn.ReLU,
+        "conv_s": nn.Conv3d,
+        "conv_t": nn.Conv3d,
+        "bn_s": nn.BatchNorm3d,
+        "bn_t": nn.BatchNorm3d,
+        "relu_s": nn.ReLU,
+        "relu_t": nn.ReLU,
     }
 
     def __init__(
@@ -38,29 +38,25 @@ class SepConv3D(nn.Module):
     ):
         super(SepConv3D, self).__init__()
         # spatial conv, batching and activation
-        self.spatial_conv = nn.Conv3d(
-            input_dim, input_dim, (kernel_size, 1, 1), stride=(stride, 1, 1), padding=(padding, 0, 0)
-        )
-        self.bn_spatial = nn.BatchNorm3d(input_dim, eps=0.001, momentum=0.001, affine=True)
-        self.relu_spatial = nn.ReLU(inplace=True)
+        self.conv_s = nn.Conv3d(input_dim, output_dim, kernel_size=(1,kernel_size,kernel_size), stride=(1,stride,stride), padding=(0,padding,padding), bias=False)
+        self.bn_s = nn.BatchNorm3d(output_dim, eps=1e-3, momentum=0.001, affine=True)
+        self.relu_s = nn.ReLU(inplace=True)
 
         # temporal conv, batching and activation
-        self.temporal_conv = nn.Conv3d(
-            input_dim, output_dim, (1, 1, kernel_size), stride=(1, 1, stride), padding=(0, 0, padding)
-        )
-        self.bn_temporal = nn.BatchNorm3d(output_dim, eps=0.001, momentum=0.001, affine=True)
-        self.relu_temporal = nn.ReLU(inplace=True)
+        self.conv_t = nn.Conv3d(output_dim, output_dim, kernel_size=(kernel_size,1,1), stride=(stride,1,1), padding=(padding,0,0), bias=False)
+        self.bn_t = nn.BatchNorm3d(output_dim, eps=1e-3, momentum=0.001, affine=True)
+        self.relu_t = nn.ReLU(inplace=True)
 
     def forward(self, x: th.Tensor) -> th.Tensor:
         # apply the spatial part
-        x = self.spatial_conv(x)
-        x = self.bn_spatial(x)
-        x = self.relu_spatial(x)
+        x = self.conv_s(x)
+        x = self.bn_s(x)
+        x = self.relu_s(x)
 
         # apply the temporal part
-        x = self.temporal_conv(x)
-        x = self.bn_temporal(x)
-        x = self.relu_temporal(x)
+        x = self.conv_t(x)
+        x = self.bn_t(x)
+        x = self.relu_t(x)
         return x
 
 

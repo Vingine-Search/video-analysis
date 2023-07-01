@@ -4,10 +4,10 @@ import torch as th
 import torch.nn.functional as F
 import torch.nn as nn
 
-from basic_conv3d import BasicConv3D
-from sep_conv3d import SepConv3D
-from self_gating import SelfGatting
-from inception import InceptionBlock
+from .basic_conv3d import BasicConv3D
+from .sep_conv3d import SepConv3D
+from .self_gating import SelfGatting
+from .inception import InceptionBlock
 
 class S3DG(nn.Module):
     """
@@ -21,7 +21,7 @@ class S3DG(nn.Module):
     def __init__(
         self,
         num_classes: int,
-        gatting: bool = True,
+        gatting: bool = False,
     ):
         super(S3DG, self).__init__()
 
@@ -35,7 +35,7 @@ class S3DG(nn.Module):
             # part 2
             BasicConv3D(64, 64, kernel_size=1, stride=1),
             SepConv3D(64, 192, kernel_size=3, stride=1, padding=1),
-            SelfGatting(192) if gatting else nn.Identity(),
+            # SelfGatting(192) if gatting else nn.Identity(),
             nn.MaxPool3d(kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1)),
             # part 3
             InceptionBlock(192, 64, 96, 128, 16, 32, 32),
@@ -58,7 +58,7 @@ class S3DG(nn.Module):
 
     def forward(self, x):
         y = self.base(x)
-        y = F.avg_pool3d(y, (2, y.size(3), y.size(4)), stride=1)
+        y = F.avg_pool3d(y, (1, y.size(3), y.size(4)), stride=1)
         y = self.fc(y)
         y = y.view(y.size(0), y.size(1), y.size(2))
         logits = th.mean(y, 2)

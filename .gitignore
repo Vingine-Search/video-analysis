@@ -112,6 +112,7 @@ venv.bak/
 vingine_env/
 data/
 weights/
+sample/
 
 # Spyder project settings
 .spyderproject
