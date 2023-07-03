@@ -13,7 +13,7 @@ num_classes = cfg["s3d"]["num_classes"]
 file_weight = cfg["s3d"]["model_path"]
 class_names_file = cfg["s3d"]["classes_names"]
 
-def transform(snippet):
+def transform_func(snippet):
     """ stack & noralization """
     snippet = np.concatenate(snippet, axis=-1)
     snippet = th.from_numpy(snippet).permute(2, 0, 1).contiguous().float()
@@ -32,7 +32,7 @@ def one_clip(clip_path):
     return sample_dir
 
 
-def prepare_model():
+def prepare_s3d_model():
     model = S3DG(num_classes)
     # load the weight file and copy the parameters
     if check_file_exists(file_weight):
@@ -56,7 +56,7 @@ def prepare_model():
     return model
 
 
-def infer(sample_dir, model, class_names):
+def s3d_infer(sample_dir, model, class_names):
     """ Output the top 5 Kinetics classes predicted by the model """
     model = model.cuda()
     th.backends.cudnn.benchmark = False
@@ -71,7 +71,7 @@ def infer(sample_dir, model, class_names):
         img = img[...,::-1]
         snippet.append(img)
 
-    clip_path = transform(snippet)
+    clip_path = transform_func(snippet)
     with th.no_grad():
         logits = model(clip_path.cuda()).cpu().data[0]
 
@@ -82,6 +82,11 @@ def infer(sample_dir, model, class_names):
         print (class_names[idx], '...', preds[idx])
 
 
+def read_s3d_classes():
+    class_names = [c.strip() for c in open(class_names_file)]
+    return class_names
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--clip', type=str, help='path to the sample clip', required=True)
@@ -90,11 +95,11 @@ if __name__ == '__main__':
     if not check_file_exists(args.clip):
         print ('sample clip?')
         exit()
-
-    class_names = [c.strip() for c in open(class_names_file)]
+    
+    class_names = read_s3d_classes()
+    model = prepare_s3d_model()
     print("extracting frames from the sample clip ...")
     sample_dir = one_clip(args.clip)
-    model = prepare_model()
-    infer(sample_dir, model, class_names)
+    s3d_infer(sample_dir, model, class_names)
 
 
