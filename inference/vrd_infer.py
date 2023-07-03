@@ -95,7 +95,8 @@ def vrd_batch_infer(images_dir, rlp_faster_rcnn, objects, predicates):
         for sbj_label, obj_label, pred  in zip(sbj_labels, obj_labels, pred_labels):
             sbj, obj, pred = objects[sbj_label], objects[obj_label], predicates[pred]
             # print(sbj, pred, obj)
-            predictions.append((sbj, pred, obj))
+            res = f"{sbj} {pred} {obj}"
+            predictions.append(res)
     return predictions
 
 

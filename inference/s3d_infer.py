@@ -77,9 +77,10 @@ def s3d_infer(sample_dir, model, class_names):
 
     preds = th.softmax(logits, 0).numpy()
     sorted_indices = np.argsort(preds)[::-1][:5]
-    print ('\nTop 5 classes ... with probability')
+    results = []
     for idx in sorted_indices:
-        print (class_names[idx], '...', preds[idx])
+        results.append((class_names[idx], preds[idx]))
+    return results
 
 
 def read_s3d_classes():
