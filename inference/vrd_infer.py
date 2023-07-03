@@ -11,6 +11,8 @@ import argparse
 import torch as th
 from torch.hub import load_state_dict_from_url
 from torchvision import transforms
+from torchvision.datasets import ImageFolder
+from torch.utils.data import DataLoader
 
 from config import reader
 from models.faster_rcnn.faster_rcnn import FasterRCNN
@@ -43,48 +45,59 @@ def draw_relation(img, sbj_box, obj_box, sbj, obj, pred):
     path = f"{results_dir}/rel-{opt.image_path.split('/')[-1]}"
     cv2.imwrite(path, img)
 
-
-def infer(images_paths_list):
+def prepare_vrd_model():
     faster_rcnn = FasterRCNN().to(device)
-    transform = transforms.Compose([transforms.ToTensor()])
-
     # load dataset
     with open(os.path.join(dataset_dir, 'json_dataset', 'objects.json'), 'r') as f:
         objects = json.load(f)
     with open(os.path.join(dataset_dir, 'json_dataset', 'predicates.json'), 'r') as f:
         predicates = json.load(f)
-
     classes = deepcopy(objects)
     predicates.insert(0, 'unknown')
     classes.insert(0, '__background__')
-    _class_to_ind = dict(zip(classes, range(len(classes))))
-    _ind_to_class = {v: k for k, v in _class_to_ind.items()}
-
+    # _class_to_ind = dict(zip(classes, range(len(classes))))
+    # _ind_to_class = {v: k for k, v in _class_to_ind.items()}
     # load pretrained weights
     checkpoint = load_state_dict_from_url(model_url, map_location='cpu')
     faster_rcnn.load_state_dict(checkpoint['state_dict'])
     print("Model Restored")
     faster_rcnn.eval()
+    return faster_rcnn, objects, predicates
 
+def vrd_infer(images_paths_list, faster_rcnn, objects, predicates):
+    transform = transforms.Compose([transforms.ToTensor()])
     # load an image
     for image_path in images_paths_list:
+        print(image_path)
         im = Image.open(image_path)
-        img = np.array(im)
-        draw = img.copy()
-        draw_rlp = cv2.cvtColor(draw, cv2.COLOR_RGB2BGR)
-        draw_objects = draw_rlp.copy()
-        im = transform(im)
+        im = transform(im).to(device)
         with th.no_grad():
             detections, losses = faster_rcnn([im])
-        sbj_boxes = detections[0]['sbj_boxes']
-        obj_boxes = detections[0]['obj_boxes']
         sbj_labels = detections[0]['sbj_labels']
         obj_labels = detections[0]['obj_labels']
         pred_labels = detections[0]['predicates']
-        for sbj_box, obj_box, sbj_label, obj_label, pred  in zip(sbj_boxes, obj_boxes, sbj_labels, obj_labels, pred_labels):
+        for sbj_label, obj_label, pred  in zip(sbj_labels, obj_labels, pred_labels):
             sbj, obj, pred = objects[sbj_label], objects[obj_label], predicates[pred]
             print(sbj, pred, obj)
-            # draw_relation(draw_rlp, sbj_box, obj_box, sbj, obj, pred)
+
+
+def vrd_batch_infer(images_dir, rlp_faster_rcnn, objects, predicates):
+    rlp_transform = transforms.Compose([transforms.ToTensor()])
+    dataset = ImageFolder(images_dir, transform=rlp_transform)
+    dataloader = DataLoader(dataset, batch_size=4, shuffle=False)
+    predictions = []
+    for images, _ in dataloader:
+        with th.no_grad():
+            detections, losses = rlp_faster_rcnn(images)
+        sbj_labels = detections[0]['sbj_labels']
+        obj_labels = detections[0]['obj_labels']
+        pred_labels = detections[0]['predicates']
+        for sbj_label, obj_label, pred  in zip(sbj_labels, obj_labels, pred_labels):
+            sbj, obj, pred = objects[sbj_label], objects[obj_label], predicates[pred]
+            # print(sbj, pred, obj)
+            predictions.append((sbj, pred, obj))
+    return predictions
+
 
 
 if __name__ == '__main__':
@@ -99,7 +112,8 @@ if __name__ == '__main__':
     if opt.image_path:
         if check_file_exists(opt.image_path):
             images_paths_list = [opt.image_path]
-            infer(images_paths_list)
+            faster_rcnn, objects, predicates = prepare_vrd_model()
+            vrd_infer(images_paths_list, faster_rcnn, objects, predicates)
         else:
             print("File does not exist")
 
@@ -107,9 +121,10 @@ if __name__ == '__main__':
     elif opt.image_dir:
         if check_dir_exists(opt.image_dir):
             images_paths_list = []
+            faster_rcnn, objects, predicates = prepare_vrd_model()
             for image_path in os.listdir(opt.image_dir):
                 images_paths_list.append(os.path.join(opt.image_dir, image_path))
-            infer(images_paths_list)
+            vrd_infer(images_paths_list, faster_rcnn, objects, predicates)
         else:
             print("Directory does not exist")
 
