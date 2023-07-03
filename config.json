@@ -77,6 +77,7 @@
   "dataset": "VRD",
 	"dataset_dir": "./data/VRD",
 	"wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin",
+  "coco_names": "./data/coco_names.txt",
   "snapshot_dir": "./outputs/snapshots",
   "log_dir": "./outputs/tf_logs",
   "results_dir": "./outputs/results",
