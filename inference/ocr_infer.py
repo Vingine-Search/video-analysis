@@ -9,7 +9,7 @@ import argparse
 import cv2
 import easyocr
 
-from config import reader
+from video_description.config import reader
 from ._utils import check_file_exists, check_dir_exists
 from ._utils import ( 
     check_file_exists,
@@ -32,7 +32,7 @@ def easyocr_infer(images_paths_list, reader):
     images = [cv2.imread(img) for img in images_paths_list]
     images_grayscaled = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in images]
     npimages = np.array(images_grayscaled)
-    return [reader.readtext(i, paragraph=True, detail=0, batch_size=4) for i in npimage]
+    return [reader.readtext(i, paragraph=True, detail=0, batch_size=4) for i in npimages]
 
 
 if __name__ == "__main__":

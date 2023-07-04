@@ -2,7 +2,7 @@ import os
 import numpy as np
 import cv2
 import torch as th
-from models.s3dg.s3dg import S3DG
+from video_description.models.s3dg.s3dg import S3DG
 import argparse
 
 from config import reader
@@ -112,6 +112,6 @@ if __name__ == '__main__':
     model = prepare_s3d_model()
     print("extracting frames from the sample clip ...")
     sample_dir = one_clip(args.clip)
-    s3d_infer(sample_dir, model, class_names)
+    print(s3d_infer(sample_dir, model, class_names))
 
 
