@@ -54,21 +54,24 @@ def set_text(img, text, text_pos):
     return img
 
 
-def clip_to_frames(clip_path, output_path, frames_rate=16):
+# start_time, end_time in seconds
+def clip_to_frames(clip_path, output_path, fps=1, start_time=None, end_time=None):
+    # TODO: check if start_time and end_time are "valid"
     """ video 1minute -> 60 frame i.e 1 frame per second """
     vidcap = cv2.VideoCapture(clip_path)
     frame_count = 0
+    if start_time:
+        vidcap.set(cv2.CAP_PROP_POS_MSEC, start_time * 1000)
+        frame_count = start_time
     success, frame = vidcap.read()
     success = True
     while success:
-        frame = cv2.resize(frame, (224, 224))
+        # frame = cv2.resize(frame, (224, 224))
         cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), frame)
-        vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))    # added this line 
-        frame_count = frame_count + 1
+        if end_time and frame_count >= end_time:
+            break
+        vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))
+        frame_count = frame_count + 1/fps
         success, frame = vidcap.read()
     vidcap.release()
-    cv2.destroyAllWindows()
-    
-
-
 
