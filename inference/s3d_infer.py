@@ -20,9 +20,10 @@ def transform_func(snippet):
     snippet = snippet.mul_(2.).sub_(255).div(255)
     return snippet.view(1,-1,3,snippet.size(1),snippet.size(2)).permute(0,2,1,3,4)
 
-def one_clip(clip_path):
+def one_clip(clip_path, sample_dir=None):
     clip_filename = os.path.basename(clip_path)
-    sample_dir = os.path.join(os.path.dirname(clip_path), f"{clip_filename.split('.')[0]}-frames")
+    if sample_dir is None:
+        sample_dir = os.path.join(os.path.dirname(clip_path), f"{clip_filename.split('.')[0]}-frames")
     if check_dir_exists(sample_dir):
         print ('output dir exists? removing it ...')
         os.system('rm -rf ' + sample_dir)
