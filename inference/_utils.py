@@ -75,3 +75,8 @@ def clip_to_frames(clip_path, output_path, fps=1, start_time=None, end_time=None
         success, frame = vidcap.read()
     vidcap.release()
 
+
+def sort_helper(path):
+    file_name = os.path.basename(path)
+    noext, _ = os.path.splitext(file_name)
+    return float(noext)

@@ -11,6 +11,11 @@ import easyocr
 
 from config import reader
 from ._utils import check_file_exists, check_dir_exists
+from ._utils import ( 
+    check_file_exists,
+    check_dir_exists,
+    sort_helper
+)
 
 cfg = reader()
 device = cfg["device"]
@@ -23,6 +28,7 @@ def prepare_easyocr():
 
 
 def easyocr_infer(images_paths_list, reader):
+    images_paths_list = sorted(images_paths_list, key=lambda x: sort_helper(x))
     images = [cv2.imread(img) for img in images_paths_list]
     images_grayscaled = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in images]
     npimages = np.array(images_grayscaled)

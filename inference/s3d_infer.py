@@ -6,7 +6,12 @@ from models.s3dg.s3dg import S3DG
 import argparse
 
 from config import reader
-from ._utils import check_file_exists, check_dir_exists, clip_to_frames
+from ._utils import ( 
+    check_file_exists,
+    check_dir_exists,
+    clip_to_frames,
+    sort_helper
+)
 
 cfg = reader()
 num_classes = cfg["s3d"]["num_classes"]
@@ -68,7 +73,7 @@ def s3d_infer(sample_dir, model, class_names):
     th.backends.cudnn.benchmark = False
     model.eval()
     list_frames = [f for f in os.listdir(sample_dir) if os.path.isfile(os.path.join(sample_dir, f))]
-    list_frames.sort()
+    list_frames = sorted(list_frames, key=lambda x: sort_helper(x))
     # read all the frames of sample clip
     snippet = []
     for frame in list_frames:
