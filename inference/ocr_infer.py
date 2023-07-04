@@ -9,7 +9,7 @@ import argparse
 import cv2
 import easyocr
 
-from video_description.config import reader
+from config.config import reader
 from ._utils import check_file_exists, check_dir_exists
 from ._utils import ( 
     check_file_exists,

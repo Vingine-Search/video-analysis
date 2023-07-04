@@ -5,7 +5,7 @@ import torch as th
 import torch.nn as nn
 
 from .s3dg import S3DG
-from config import reader
+from config.config import reader
 
 cfg = reader()
 num_classes = cfg["s3d"]["num_classes"]

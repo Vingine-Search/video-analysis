@@ -14,8 +14,8 @@ from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 
-from video_description.config import reader
-from video_description.models.faster_rcnn.faster_rcnn import FasterRCNN
+from config.config import reader
+from models.faster_rcnn.faster_rcnn import FasterRCNN
 from ._utils import (
     draw_boxes,
     set_text,

@@ -2,10 +2,10 @@ import os
 import numpy as np
 import cv2
 import torch as th
-from video_description.models.s3dg.s3dg import S3DG
+from models.s3dg.s3dg import S3DG
 import argparse
 
-from config import reader
+from config.config import reader
 from ._utils import ( 
     check_file_exists,
     check_dir_exists,

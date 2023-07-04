@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-from video_description.config import reader
+from config.config import reader
 from .wordvec import get_obj_prd_vecs
 
 cfg = reader()

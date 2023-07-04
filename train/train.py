@@ -6,7 +6,7 @@ import torch as th
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 
-from config import reader
+from config.config import reader
 from datasets.loader import (
     get_training_data,
     get_validation_data,

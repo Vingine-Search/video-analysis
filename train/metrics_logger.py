@@ -2,7 +2,7 @@
 # is used to visualize the training process
 
 import tensorboardX
-from config import reader
+from config.config import reader
 
 cfg = reader()
 log_dir = cfg["train"]["log_dir"]
