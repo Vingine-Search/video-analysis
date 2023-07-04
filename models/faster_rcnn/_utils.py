@@ -6,7 +6,7 @@ import torch as th
 from torch import Tensor
 from typing import Tuple, List, Dict
 
-from config.config import reader
+from ...config.config import reader
 
 cfg = reader()
 cfg_device = cfg["device"]

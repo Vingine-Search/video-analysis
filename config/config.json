@@ -62,8 +62,8 @@
   },
   "s3d": {
     "num_classes": 400,
-    "model_path": "./weights/S3D_kinetics400.pt",
-    "classes_names": "./data/kinetics_classes.txt"
+    "model_path": "video_description/weights/S3D_kinetics400.pt",
+    "classes_names": "video_description/data/kinetics_classes.txt"
   },
   "opt": {
     "num_workers": 0,
@@ -75,12 +75,12 @@
     "max_iter": 125446
   },
   "dataset": "VRD",
-	"dataset_dir": "./data/VRD",
-	"wordvectors_dir": "./data/wordvectors/GoogleNews-vectors-negative300.bin",
-  "coco_names": "./data/coco_names.txt",
-  "snapshot_dir": "./outputs/snapshots",
-  "log_dir": "./outputs/tf_logs",
-  "results_dir": "./outputs/results",
+	"dataset_dir": "video_description/data/VRD",
+	"wordvectors_dir": "video_description/data/wordvectors/GoogleNews-vectors-negative300.bin",
+  "coco_names": "video_description/data/coco_names.txt",
+  "snapshot_dir": "video_description/outputs/snapshots",
+  "log_dir": "video_description/outputs/tf_logs",
+  "results_dir": "video_description/outputs/results",
   "model_url": "https://github.com/pranoyr/large-scale-visual-relationship-understanding/releases/download/v1.0/large_scale_vrd_iter-25000.pth"
 }
 

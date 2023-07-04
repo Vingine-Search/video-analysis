@@ -10,7 +10,7 @@ from .rpnhead import RPNHead
 from .anchorgeni import AnchorGeni
 from .rpncore import RPNCore
 
-from config.config import reader
+from ...config.config import reader
 
 cfg = reader()
 

@@ -9,7 +9,7 @@ import argparse
 import cv2
 import easyocr
 
-from config.config import reader
+from ..config.config import reader
 from ._utils import check_file_exists, check_dir_exists
 from ._utils import ( 
     check_file_exists,
@@ -29,11 +29,12 @@ def prepare_easyocr():
 
 def easyocr_infer(images_paths_list, reader):
     images_paths_list = sorted(images_paths_list, key=lambda x: sort_helper(x))
-    images = [cv2.imread(img) for img in images_paths_list]
-    images_grayscaled = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in images]
-    npimages = np.array(images_grayscaled)
-    return [reader.readtext(i, paragraph=True, detail=0, batch_size=4) for i in npimages]
-
+    res = []
+    for i, img in enumerate(images_paths_list):
+        print(i + 1)
+        img = np.array(cv2.cvtColor(cv2.imread(img), cv2.COLOR_BGR2GRAY))
+        res.append(reader.readtext(img, paragraph=True, detail=0))
+    return res
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

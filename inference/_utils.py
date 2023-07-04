@@ -64,14 +64,16 @@ def clip_to_frames(clip_path, output_path, fps=1, start_time=None, end_time=None
         vidcap.set(cv2.CAP_PROP_POS_MSEC, start_time * 1000)
         frame_count = start_time
     success, frame = vidcap.read()
-    success = True
     while success:
         # frame = cv2.resize(frame, (224, 224))
-        cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), frame)
-        if end_time and frame_count >= end_time:
+        if end_time is not None and frame_count >= end_time:
             break
-        vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))
+        # this is for s3d
+        cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), cv2.resize(frame, (224, 224)))
+        # this is for easyocr & fasterrcnn
+        cv2.imwrite(os.path.join(output_path, "unknown", f"{frame_count}.jpg"), frame)
         frame_count = frame_count + 1/fps
+        vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))
         success, frame = vidcap.read()
     vidcap.release()
 

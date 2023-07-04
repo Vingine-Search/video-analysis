@@ -5,7 +5,7 @@ import gensim
 import numpy as np
 from numpy import linalg as la
 
-from config.config import reader
+from ...config.config import reader
 from typing import List, Dict, Tuple
 
 cfg = reader()

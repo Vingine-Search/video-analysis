@@ -2,10 +2,10 @@ import os
 import numpy as np
 import cv2
 import torch as th
-from models.s3dg.s3dg import S3DG
+from ..models.s3dg.s3dg import S3DG
 import argparse
 
-from config.config import reader
+from ..config.config import reader
 from ._utils import ( 
     check_file_exists,
     check_dir_exists,
@@ -25,19 +25,18 @@ def transform_func(snippet):
     snippet = snippet.mul_(2.).sub_(255).div(255)
     return snippet.view(1,-1,3,snippet.size(1),snippet.size(2)).permute(0,2,1,3,4)
 
-def one_clip(clip_path, dir_name=None, fps=1, start=None, end=None):
-    clip_filename = os.path.basename(clip_path)
-    if dir_name is None:
-        dir_name = f"{clip_filename.split('.')[0]}-frames"
+def one_clip(clip_path, fps=1, start=None, end=None):
+    dir_name = f"{os.path.splitext(os.path.basename(clip_path))[0]}-frames"
     if start is not None:
-        dir_name = f"{dir_name}-{start}"
+        dir_name = f"{dir_name}-s{start}"
     if end is not None:
-        dir_name = f"{dir_name}-{end}"
+        dir_name = f"{dir_name}-e{end}"
     sample_dir = os.path.join(os.path.dirname(clip_path), dir_name)
     if check_dir_exists(sample_dir):
         print ('output dir exists? overwriting it ...')
-    else:
-        os.mkdir(sample_dir)
+        os.system(f"rm -rf {sample_dir}")
+    os.mkdir(sample_dir)
+    os.mkdir(os.path.join(sample_dir, "unknown"))
     # extract frames from the sample clip
     clip_to_frames(clip_path, sample_dir, fps=fps, start_time=start, end_time=end)
     return sample_dir

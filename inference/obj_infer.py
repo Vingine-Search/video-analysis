@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 import os
 import argparse
 
-from config.config import reader
+from ..config.config import reader
 from ._utils import check_file_exists, check_dir_exists
 
 cfg = reader()
