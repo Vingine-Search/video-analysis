@@ -26,11 +26,11 @@ def transform_func(snippet):
     return snippet.view(1,-1,3,snippet.size(1),snippet.size(2)).permute(0,2,1,3,4)
 
 def one_clip(clip_path, fps=1, start=None, end=None):
-    dir_name = f"{os.path.splitext(os.path.basename(clip_path))[0]}-frames"
-    if start is not None:
-        dir_name = f"{dir_name}-s{start}"
-    if end is not None:
-        dir_name = f"{dir_name}-e{end}"
+    if start is None:
+        start = 0
+    if end is None:
+        end = 0
+    dir_name = f"{os.path.splitext(os.path.basename(clip_path))[0]}-frames-s{start}-e{end}"
     sample_dir = os.path.join(os.path.dirname(clip_path), dir_name)
     if check_dir_exists(sample_dir):
         print ('output dir exists? overwriting it ...')
