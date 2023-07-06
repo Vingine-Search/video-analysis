@@ -71,7 +71,7 @@ def clip_to_frames(clip_path, output_path, fps=1, start_time=None, end_time=None
         # this is for s3d
         cv2.imwrite(os.path.join(output_path, f"{frame_count}.jpg"), cv2.resize(frame, (224, 224)))
         # this is for easyocr & fasterrcnn
-        frame = cv2.resize(frame, (300, int(300 * frame.shape[0] / frame.shape[1])))
+        frame = cv2.resize(frame, (800, int(800 * frame.shape[0] / frame.shape[1])))
         cv2.imwrite(os.path.join(output_path, "unknown", f"{frame_count}.jpg"), frame)
         frame_count = frame_count + 1/fps
         vidcap.set(cv2.CAP_PROP_POS_MSEC,(frame_count*1000))
