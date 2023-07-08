@@ -31,8 +31,12 @@ def easyocr_infer(images_paths_list, reader):
     images_paths_list = sorted(images_paths_list, key=lambda x: sort_helper(x))
     res = []
     for i, img in enumerate(images_paths_list):
-        img = np.array(cv2.cvtColor(cv2.imread(img), cv2.COLOR_BGR2GRAY))
-        res.append(reader.readtext(img, paragraph=True, detail=0))
+        img = cv2.cvtColor(cv2.imread(img), cv2.COLOR_BGR2GRAY)
+        cur = reader.readtext(img, detail=1)
+        # import pdb; pdb.set_trace()
+        for word in cur:
+            if word[2] > 0.77:
+                res.append([word[1]])
     return res
 
 if __name__ == "__main__":
